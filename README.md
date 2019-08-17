@@ -1,1 +1,1 @@
-# libevent-http
+# a web server based on the libevent 
