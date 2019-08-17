@@ -143,6 +143,7 @@ void Http::read_cb(bufferevent* bev, void* arg)
 
 void Http::event_cb(bufferevent* bev, short events, void* arg)
 {
+    Http* http=(Http*)arg;
     if (events&BEV_EVENT_EOF)
     {
         printf("conncted closed!\n");
@@ -151,7 +152,13 @@ void Http::event_cb(bufferevent* bev, short events, void* arg)
     {
         printf("some other wrong!\n");
     }
-    bufferevent_free(bev);
+    Http::release(&http);
+}
+
+void Http::release(Http** _http)
+{
+    delete *_http;
+    *_http=nullptr;
 }
 
 void Http::run(void* arg)
@@ -163,6 +170,15 @@ void Http::run(void* arg)
 Http::Http(event_base* base, evutil_socket_t fd)
 {
     bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+}
+
+Http::~Http()
+{
+    if(bev)
+    {
+        bufferevent_free(bev);
+        bev=nullptr;
+    }
 }
 
 Http* Http::create(event_base* base, evutil_socket_t fd)
