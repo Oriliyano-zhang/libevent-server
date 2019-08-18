@@ -8,7 +8,4 @@ Start server
 -------------
 ./server port path
 
-Technical
-----------
-
 
